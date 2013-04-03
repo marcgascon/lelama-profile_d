@@ -1,7 +1,7 @@
 
 #####
 
-Create a script in /etc/profile.d
+Create a script in /etc/profile.d or $HOME/.profile.d
 
 Examples:
 
@@ -33,4 +33,12 @@ Examples:
     ensure  => present,
     content => 'export VARIABLE=value',
     shell   => '/bin/bash',
+   }
+   
+5. create a simple script that sets one variable for the root user :
+
+   profile_d::script {'name-of-script.sh':
+    ensure  => present,
+    content => 'export VARIABLE=value',
+    user	=> 'root',
    }
