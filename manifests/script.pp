@@ -1,4 +1,13 @@
-define profile_d::script ($ensure = 'present', $content = '', $content_file = '', $source = '', $shell = '/bin/sh', $user = undef) {
+# TODO: add documentation in line with
+# http://docs.puppetlabs.com/guides/style_guide.html#puppet-doc
+define profile_d::script (
+    $ensure = 'present',
+    $content = '',
+    $content_file = '',
+    $source = '',
+    $shell = '/bin/sh',
+    $user = undef
+) {
     include profile_d
 
     if ($content == '') and ($content_file == '') and ($source == '') {
@@ -10,7 +19,7 @@ define profile_d::script ($ensure = 'present', $content = '', $content_file = ''
     }
 
     if ($content != '') {
-        $content_value = inline_template("<%= scope.function_template(['profile_d/header.erb']) -%>$content")
+        $content_value = inline_template("<%= scope.function_template(['profile_d/header.erb']) -%>${content}")
     } elsif ($content_file != '') {
         $content_value = template($content_file)
     } else {
