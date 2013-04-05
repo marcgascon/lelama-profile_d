@@ -4,6 +4,7 @@ puppet-profile_d
 Puppet module to create scripts in /etc/profile.d or $HOME/.profile.d.
 
 Depencendies:
+
     'puppetlabs/stdlib', '>=3.2.0'
     
 Basic usage
