@@ -9,7 +9,7 @@ define profile_d::script (
 ) {
 
   include profile_d
-    
+
   if ($content == '') and ($content_file == '') and ($source == '') {
     fail('You must pass in one of the following parameters $content, $content_file, $source on definition')
   }
@@ -17,7 +17,7 @@ define profile_d::script (
   if (($content != '' and ($content_file != '' or $source != '')) or ($source != '' and $content_file != '')) {
     fail('Only one of the following $content, $content_file, $source parameters can be set on definition')
   }
-    
+
   if (($source != '' and $user != undef)) {
     fail('It is not possible to use $source in combination with $user')
   }
@@ -39,22 +39,30 @@ define profile_d::script (
     $source_value = undef
   }
 
+  if ($user != undef and $user != 'root') {
+    $home_dir = '/home'
+  } else {
+    $home_dir = ''
+  }
+
   if ($user != undef) {
     $content_value_safe = regsubst($content_value, "(')", "'\\\\''",'G') 
     if ($ensure == present) {
-      exec { "Adding ${name} for ${user}":
-        path    => "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin",
-        command => "mkdir -p ~${user}/.profile.d && echo '${content_value_safe}' > ~${user}/.profile.d/${name}",
-        unless  => "test -e ~${user}/.profile.d/ && cat ~${user}/.profile.d/${name} | grep '${content_value_safe}'",
-        user    => $user,
+      file { "${home_dir}/${user}":
+        ensure  => directory,
       }
-    }
-    else {
-      exec { "Removing ${name} for ${user}":
-        path    => "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin",
-        command => "find ~${user}/.profile.d/ -name ${name} -exec rm -f {} \\;",
-        onlyif  => "test -e ~${user}/.profile.d/${name}",
-        user    => $user,
+
+      file { "${home_dir}/${user}/.profile.d":
+        ensure  => directory,
+        require => File["${home_dir}/${user}"]
+      }
+
+      file { "${home_dir}/${user}/.profile.d/${name}":
+        ensure  => $ensure,
+        content => $content_value_safe,
+        owner   => $user,
+        mode    => '0644',
+        require => File["${home_dir}/${user}/.profile.d"]
       }
     }
   }
