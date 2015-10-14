@@ -46,24 +46,21 @@ define profile_d::script (
   }
 
   if ($user != undef) {
-    $content_value_safe = regsubst($content_value, "(')", "'\\\\''",'G') 
-    if ($ensure == present) {
-      file { "${home_dir}/${user}":
-        ensure  => directory,
-      }
+    file { "${home_dir}/${user}":
+      ensure  => directory,
+    }
 
-      file { "${home_dir}/${user}/.profile.d":
-        ensure  => directory,
-        require => File["${home_dir}/${user}"]
-      }
+    file { "${home_dir}/${user}/.profile.d":
+      ensure  => directory,
+      require => File["${home_dir}/${user}"]
+    }
 
-      file { "${home_dir}/${user}/.profile.d/${name}":
-        ensure  => $ensure,
-        content => $content_value_safe,
-        owner   => $user,
-        mode    => '0644',
-        require => File["${home_dir}/${user}/.profile.d"]
-      }
+    file { "${home_dir}/${user}/.profile.d/${name}":
+      ensure  => $ensure,
+      content => $content_value,
+      owner   => $user,
+      mode    => '0644',
+      require => File["${home_dir}/${user}/.profile.d"]
     }
   }
   else {
