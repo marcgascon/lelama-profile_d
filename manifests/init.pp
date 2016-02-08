@@ -11,7 +11,7 @@ class profile_d(
     mode   => '0755',
   }
 
-  profile_d::script { "user_profile_d.sh":
+  profile_d::script { 'user_profile_d.sh':
     content => '
 if [ -d "$HOME/.profile.d" ]; then
     for file in $HOME/.profile.d/*; do
